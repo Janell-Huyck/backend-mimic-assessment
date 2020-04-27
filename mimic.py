@@ -46,40 +46,44 @@ columns, so the output looks better.
 import random
 import sys
 
-__author__ = "???"
+# we're still programming in python 2.
+if sys.version_info[0] >= 3:
+    raise Exception("This program requires python2 interpreter")
+
+
+__author__ = "Janell Huyck"
 
 
 def create_mimic_dict(filename):
-    """Returns mimic dict mapping each word to list of words which follow it. 
-    For example:
-        Input: "I am a software developer, and I don't care who knows"
-        Output: 
-            {
-                "" : ["I"],
-                "I" : ["am", "don't"], 
-                "am": ["a"], 
-                "a": ["software"],
-                "software" : ["developer,"],
-                "developer," : ["and"],
-                "and" : ["I"],
-                "I" : ["don't"],
-                "don't" : ["care"],
-                "care" : ["who"],
-                "who" : ["knows"]
-            }
-    """
-    # +++your code here+++
-    
+    text_to_mimic = get_text(filename).split()
+    mimic_dict = {"": [text_to_mimic[0]]}
+    for word_index in range(len(text_to_mimic) - 1):
+        if text_to_mimic[word_index] not in mimic_dict:
+            mimic_dict[text_to_mimic[word_index]] = [
+                text_to_mimic[word_index + 1]]
+        else:
+            mimic_dict[text_to_mimic[word_index]
+                       ] += [text_to_mimic[word_index + 1]]
+    return mimic_dict
+
+
+def get_text(filename):
+    f = open(filename, "r")
+    text = f.read()
+    f.close()
+    return text
+
 
 def print_mimic(mimic_dict, start_word):
-    """Given a previously compiled mimic_dict and start_word, prints 200 random words:
-        - Print the start_word
-        - Lookup the start_word in your mimic_dict and get it's next-list
-        - Randomly select a new word from the next-list
-        - Repeat this process 200 times
-    """
-    # +++your code here+++
-    pass
+    seed = mimic_dict[""][0]
+    print seed,
+    for count in range(200):
+        new_seed_index = random.randint(0, len(mimic_dict[seed])-1)
+        new_seed = mimic_dict[seed][new_seed_index]
+        print new_seed,
+        seed = new_seed
+        if seed not in mimic_dict:
+            seed = ''
 
 
 # Provided main(), calls mimic_dict() and mimic()
